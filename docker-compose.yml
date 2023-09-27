@@ -1,0 +1,40 @@
+version: '3.5'
+services:
+
+    nginx:
+        image: nginx:latest
+        ports:
+            - 80:80
+        volumes:
+            - ./:/var/www
+            - ./_docker/nginx/conf.d:/etc/nginx/conf.d
+        depends_on:
+            - app
+        container_name: ambassador_nginx
+
+    app:
+        build:
+            context: ./
+            dockerfile: _docker/app/Dockerfile
+        volumes:
+            - ./:/var/www
+        depends_on:
+            - db
+        container_name: ambassador_app
+
+    db:
+        image: mysql:8
+        restart: always
+        volumes:
+            - db:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: ambassador_db
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - 3309:3306
+        command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --innodb_use_native_aio=0
+        container_name: ambassador_db
+
+volumes:
+    db:
+
