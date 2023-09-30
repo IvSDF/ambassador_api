@@ -13,21 +13,33 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 */
-Route::prefix('admin')->group(function () {
+
+function common(string $scope)
+{
     Route::post('register', [AuthController::class, 'register'])->name('register');
     Route::post('login', [AuthController::class, 'login'])->name('login');
 
-    Route::middleware(['auth:sanctum', 'scope.admin'])->group(function (){
+    Route::middleware(['auth:sanctum', $scope])->group(function () {
         Route::get('user', [AuthController::class, 'user'])->name('user');
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
         Route::put('user/info', [AuthController::class, 'updateInfo'])->name('updateInfo');
         Route::put('user/password', [AuthController::class, 'updatePassword'])->name('updatePassword');
+    });
 
+}
+
+Route::prefix('admin')->group(function () {
+    common('scope.admin');
+
+    Route::middleware(['auth:sanctum', 'scope.admin'])->group(function (){
         Route::get('ambassadors', [AmbassadorController::class, 'index']);
         Route::get('users/{id}/links', [LinkController::class, 'index']);
         Route::get('orders', [OrderController::class, 'index']);
 
         Route::apiResource('products',ProductController::class);
-
     });
+});
+
+Route::prefix('ambassador')->group(function () {
+    common('scope.ambassador');
 });

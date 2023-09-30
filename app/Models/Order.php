@@ -25,4 +25,9 @@ class Order extends Model
     {
         return $this->orderItems->sum(fn(OrderItem $item) =>  $item->admin_revenue);
     }
+
+    public function getAmbassadorRevenueAttribute()
+    {
+        return $this->orderItems->sum(fn(OrderItem $item) =>  $item->ambassador_revenue);
+    }
 }

@@ -39,4 +39,14 @@ class User extends Authenticatable
     {
         return $query->where('admin', 0);
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function getRevenueAttribute()
+    {
+        return $this->orders->sum(fn(Order $order) => $order->ambassador_revenue);
+    }
 }
