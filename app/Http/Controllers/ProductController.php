@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Str;
 use Ramsey\Collection\Collection;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -58,11 +59,17 @@ class ProductController extends Controller
     {
         $page = $request->input('page', 1);
         $products = \Cache::remember('products_backend', 30 * 60, fn() => Product::all());
+
+        if ($s = $request->input('s')) {
+            $products = $products
+                ->filter(
+                    fn(Product $product) => Str::contains($product->title, $s) || Str::contains($product->description, $s));
+        }
         $total = $products->count();
 
         /** @var Collection $products */
         return [
-            'data' => $products->forPage($page, 9),
+            'data' => $products->forPage($page, 9)->values(),
             'meta' => [
                 'total' => $total,
                 'page' => $page,
