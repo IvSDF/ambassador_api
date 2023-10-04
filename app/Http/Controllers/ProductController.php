@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProductUpdatedEvent;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -31,6 +32,8 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $product->update($request->only('title', 'description', 'image', 'price'));
+
+        event( new ProductUpdatedEvent());
 
         return response($product, Response::HTTP_ACCEPTED);
     }
