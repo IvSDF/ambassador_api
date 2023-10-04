@@ -28,6 +28,7 @@ class Order extends Model
 
     public function getAmbassadorRevenueAttribute()
     {
+        usleep(100000);
         return $this->orderItems->sum(fn(OrderItem $item) =>  $item->ambassador_revenue);
     }
 }
