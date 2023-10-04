@@ -38,7 +38,7 @@ class User extends Authenticatable
 
     public function scopeAdmin($query)
     {
-        return $query->where('admin', 0);
+        return $query->where('is_admin', 1);
     }
 
     public function orders()
