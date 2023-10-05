@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,19 +17,24 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function getNameAttribute()
+    public function name(): Attribute
     {
-         return $this->first_name . ' ' . $this->last_name;
+        return Attribute::make(
+            get: $this->first_name . ' ' . $this->last_name
+        );
     }
 
-    public function getAdminRevenueAttribute()
+    public function AdminRevenue(): Attribute
     {
-        return $this->orderItems->sum(fn(OrderItem $item) =>  $item->admin_revenue);
+        return Attribute::make(
+            get: $this->orderItems->sum(fn(OrderItem $item) => $item->admin_revenue)
+        );
     }
 
-    public function getAmbassadorRevenueAttribute()
+    public function AmbassadorRevenue(): Attribute
     {
-        usleep(100000);
-        return $this->orderItems->sum(fn(OrderItem $item) =>  $item->ambassador_revenue);
+        return Attribute::make(
+            get: $this->orderItems->sum(fn(OrderItem $item) => $item->ambassador_revenue)
+        );
     }
 }

@@ -55,7 +55,6 @@ class ProductController extends Controller
             return $products;
         }
 
-        sleep(2);
         $products = Product::all();
         \Cache::set('products_frontend', $products, 30 * 60); //30 min
 
