@@ -61,7 +61,7 @@ class AuthController extends Controller
         return new UserResource($user);
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
         $cookie = \Cookie::forget('jwt');
 
