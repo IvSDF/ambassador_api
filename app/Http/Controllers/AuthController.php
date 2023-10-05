@@ -36,7 +36,7 @@ class AuthController extends Controller
 
         $user = \Auth::user();
 
-        $adminLogin = $request->path() === 'api/admin/register';
+        $adminLogin = $request->path() === 'api/admin/login';
 
         if ($adminLogin && !$user->is_admin) {
             return response([
@@ -45,6 +45,7 @@ class AuthController extends Controller
         }
 
         $scope = $adminLogin ? 'admin' : 'ambassador';
+
         $jwt = $user->createToken('token', [$scope])->plainTextToken;
 
         $cookie = cookie('jwt', $jwt, 60*24);
@@ -60,7 +61,7 @@ class AuthController extends Controller
         return new UserResource($user);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         $cookie = \Cookie::forget('jwt');
 
