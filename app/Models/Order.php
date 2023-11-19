@@ -17,24 +17,18 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function name(): Attribute
+    public function getNameAttribute()
     {
-        return Attribute::make(
-            get: $this->first_name . ' ' . $this->last_name
-        );
+        return $this->first_name . ' ' . $this->last_name;
     }
 
-    public function AdminRevenue(): Attribute
+    public function getAdminRevenueAttribute()
     {
-        return Attribute::make(
-            get: $this->orderItems->sum(fn(OrderItem $item) => $item->admin_revenue)
-        );
+        return $this->orderItems->sum(fn(OrderItem $item) =>  $item->admin_revenue);
     }
 
-    public function AmbassadorRevenue(): Attribute
+    public function getAmbassadorRevenueAttribute()
     {
-        return Attribute::make(
-            get: $this->orderItems->sum(fn(OrderItem $item) => $item->ambassador_revenue)
-        );
+        return $this->orderItems->sum(fn(OrderItem $item) =>  $item->ambassador_revenue);
     }
 }
