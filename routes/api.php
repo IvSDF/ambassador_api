@@ -53,3 +53,7 @@ Route::prefix('ambassador')->group(function () {
         Route::get('rankings', [StatsController::class, 'rankings']);
     });
 });
+
+Route::prefix('checkout')->group(function () {
+    Route::get('links/{code}', [LinkController::class, 'show']);
+});

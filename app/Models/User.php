@@ -46,11 +46,9 @@ class User extends Authenticatable
         return $this->hasMany(Order::class)->where('complete', 1);
     }
 
-    public function revenue(): Attribute
+    public function getRevenueAttribute()
     {
-        return Attribute::make(
-            get: $this->orders->sum(fn(Order $order) => $order->ambassador_revenue)
-        );
+        return $this->orders->sum(fn(Order $order) => $order->ambassador_revenue);
     }
 
     public function name(): Attribute
