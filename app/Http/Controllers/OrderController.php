@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Payments\LiqPayPayment;
 use App\Http\Resources\OrderResource;
 use App\Models\Link;
 use App\Models\Order;
@@ -9,6 +10,8 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use LiqPay;
 
 class OrderController extends Controller
 {
@@ -56,6 +59,11 @@ class OrderController extends Controller
                 $orderItem->save();
             }
 
+//            dd($order);
+            $payment = new LiqPayPayment();
+
+//            dd($html);
+
             DB::commit();
         } catch ( \Throwable $e) {
 
@@ -63,6 +71,6 @@ class OrderController extends Controller
             abort(500, 'Ups!!!');
         }
 
-        return $order->load('orderItems');
+        return $payment;
     }
 }
