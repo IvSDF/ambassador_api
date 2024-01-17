@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use LiqPay;
+use function Laravel\Prompts\error;
 
 class OrderController extends Controller
 {
@@ -96,5 +97,23 @@ class OrderController extends Controller
                'error' => $e->getMessage()
             ], 400);
         }
+    }
+
+    public function confirm(Request $request)
+    {
+        if (!$order = Order::where('transaction_id', $request->input('source'))->first())
+        {
+            return response([
+                'error' => 'Order not found!'
+            ], 404);
+        }
+
+        $order->complete = 1;
+
+        $order->save();
+
+        return response([
+            'message' => 'success'
+        ]);
     }
 }
