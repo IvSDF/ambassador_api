@@ -35,7 +35,7 @@ class LiqPayPayment implements PaymentsInterface
             'signature' => $prerequisites->getSignature(),
         ]);
 
-        dd($response);
+        dd($response->header());
 
         return $response;
     }

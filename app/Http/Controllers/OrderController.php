@@ -8,6 +8,7 @@ use App\Models\Link;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use Cartalyst\Stripe\Laravel\Facades\Stripe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -44,6 +45,7 @@ class OrderController extends Controller
             $order->zip = $request->input('zip');
 
             $order->save();
+            $lineItems = [];
 
             foreach ($request->input('products') as $item) {
                 $product = Product::find($item['product_id']);
@@ -57,20 +59,42 @@ class OrderController extends Controller
                 $orderItem->admin_revenue = 0.9 * $product->price * $item['quantity'];
 
                 $orderItem->save();
+
+                $lineItems[] = [
+                    'name' => $product->title,
+                    'description' => $product->descryption,
+                    'images' => [
+                        $product->image
+                    ],
+                    'amount' => 100 * $product->price,
+                    'currency' => 'usd',
+                    'quantity' => $item['quantity']
+                ];
             }
 
-//            dd($order);
-            $payment = new LiqPayPayment();
+            $stripe = \Cartalyst\Stripe\Stripe::make(env('STRIPE_SECRET'));
 
-//            dd($html);
+            $source = $stripe->checkout()->sessions()->create([
+                'payment_method_types' => ['card'],
+                'line_items' => $lineItems,
+                'success_url' => env('CHECKOUT_URL') . '/success?source={CHECKOUT_SESSION_ID}',
+                'cancel_url' => env('CHECKOUT_URL') . '/error'
+            ]);
+
+            $order->transaction_id = $source['id'];
+            $order->save();
 
             DB::commit();
+
+            return $source;
+
         } catch ( \Throwable $e) {
 
             DB::rollBack();
-            abort(500, 'Ups!!!');
-        }
 
-        return $payment;
+            return response([
+               'error' => $e->getMessage()
+            ], 400);
+        }
     }
 }
