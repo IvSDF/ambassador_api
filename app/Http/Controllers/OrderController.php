@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\OrderComplitedEvant;
 use App\Http\Payments\LiqPayPayment;
 use App\Http\Resources\OrderResource;
 use App\Models\Link;
@@ -109,8 +110,9 @@ class OrderController extends Controller
         }
 
         $order->complete = 1;
-
         $order->save();
+
+        event(new OrderComplitedEvant($order));
 
         return response([
             'message' => 'success'

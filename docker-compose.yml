@@ -46,6 +46,17 @@ services:
         environment:
             - REDIS_REPLICATION_MODE=master
 
+    mailhog:
+        image: mailhog/mailhog
+        container_name: mailhog
+        external_links:
+            - mailhog
+        ports:
+            - 1025:1025
+            - 8025:8025
+        volumes:
+            - /var/run/docker.sock:/tmp/docker.sock:ro
+
 
 volumes:
     db:
