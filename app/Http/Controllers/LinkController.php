@@ -12,7 +12,7 @@ class LinkController extends Controller
 {
     public function index($id)
     {
-        $links = Link::where('user_id', $id)->get();
+        $links = Link::with('orders')->where('user_id', $id)->get();
 
         return LinkResource::collection($links);
     }
